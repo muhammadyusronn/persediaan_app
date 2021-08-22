@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 23 Mar 2021 pada 20.08
+-- Waktu pembuatan: 22 Agu 2021 pada 21.08
 -- Versi server: 10.1.38-MariaDB
 -- Versi PHP: 7.3.2
 
@@ -65,8 +65,8 @@ CREATE TABLE `tb_barang` (
 --
 
 INSERT INTO `tb_barang` (`idbarang`, `namabarang`, `harga`, `jumlahtersedia`, `kategori`, `hargamodal`) VALUES
-('BRG001', 'Pencil', 20000, 20, 'KAT001', 15000),
-('BRG002', 'Spidol', 120000, 19, 'KAT001', 80000);
+('BRG002', 'Spidol', 120000, 90, 'KAT001', 80000),
+('BRG003', 'Pencil', 25000, 90, 'KAT001', 17000);
 
 -- --------------------------------------------------------
 
@@ -88,7 +88,7 @@ CREATE TABLE `tb_barangkeluar` (
 --
 
 INSERT INTO `tb_barangkeluar` (`kodetransaksi`, `tanggaltransaksi`, `konsumen`, `kontak`, `totalbelanja`, `penanggungjawab`) VALUES
-('KLR001', '2021-03-24', 'Sabrina', '08128829920', 280000, 'admin');
+('TKL001', '2021-08-23', 'Sabrina', '0812882992', 2750000, 'admin');
 
 -- --------------------------------------------------------
 
@@ -110,7 +110,7 @@ CREATE TABLE `tb_barangmasuk` (
 --
 
 INSERT INTO `tb_barangmasuk` (`kodetransaksi`, `nonota`, `namasuplier`, `tanggaltransaksi`, `penanggungjawab`, `totalbiaya`) VALUES
-('MSK001', '09010', 'PJ Maju Jaya', '2021-03-23', 'admin', 700000);
+('TMS001', '123', 'PT Supplier Termurah', '2021-08-23', 'admin', 21700000);
 
 -- --------------------------------------------------------
 
@@ -121,6 +121,8 @@ INSERT INTO `tb_barangmasuk` (`kodetransaksi`, `nonota`, `namasuplier`, `tanggal
 CREATE TABLE `tb_detailkeluar` (
   `kodetransaksi` varchar(11) NOT NULL,
   `kodebarang` varchar(20) NOT NULL,
+  `namabarang` varchar(50) NOT NULL,
+  `hargabarang` int(11) NOT NULL,
   `jumlahbarang` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -128,9 +130,10 @@ CREATE TABLE `tb_detailkeluar` (
 -- Dumping data untuk tabel `tb_detailkeluar`
 --
 
-INSERT INTO `tb_detailkeluar` (`kodetransaksi`, `kodebarang`, `jumlahbarang`) VALUES
-('KLR001', 'BRG001', 2),
-('KLR001', 'BRG002', 2);
+INSERT INTO `tb_detailkeluar` (`kodetransaksi`, `kodebarang`, `namabarang`, `hargabarang`, `jumlahbarang`) VALUES
+('TKL001', 'BRG002', 'Spidol', 120000, 10),
+('TKL001', 'BRG003', 'Pencil', 25000, 10),
+('TKL001', 'BRG004', 'Buku', 130000, 10);
 
 -- --------------------------------------------------------
 
@@ -141,6 +144,7 @@ INSERT INTO `tb_detailkeluar` (`kodetransaksi`, `kodebarang`, `jumlahbarang`) VA
 CREATE TABLE `tb_detailmasuk` (
   `kodetransaksi` varchar(11) NOT NULL,
   `kodebarang` varchar(20) NOT NULL,
+  `namabarang` varchar(50) NOT NULL,
   `jumlahbarang` int(11) NOT NULL,
   `hargabarang` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -149,9 +153,10 @@ CREATE TABLE `tb_detailmasuk` (
 -- Dumping data untuk tabel `tb_detailmasuk`
 --
 
-INSERT INTO `tb_detailmasuk` (`kodetransaksi`, `kodebarang`, `jumlahbarang`, `hargabarang`) VALUES
-('MSK001', 'BRG001', 10, 20000),
-('MSK001', 'BRG002', 10, 50000);
+INSERT INTO `tb_detailmasuk` (`kodetransaksi`, `kodebarang`, `namabarang`, `jumlahbarang`, `hargabarang`) VALUES
+('TMS001', 'BRG002', 'Spidol', 100, 100000),
+('TMS001', 'BRG003', 'Pencil', 100, 17000),
+('TMS001', 'BRG004', 'Buku', 100, 100000);
 
 -- --------------------------------------------------------
 
@@ -170,7 +175,8 @@ CREATE TABLE `tb_kategori` (
 --
 
 INSERT INTO `tb_kategori` (`idkategori`, `namakategori`, `deskripsikategori`) VALUES
-('KAT001', 'Alat Tulis', 'Ini adalah kategori alat tulis');
+('KAT001', 'Alat Tulis', 'Ini adalah kategori alat tulis'),
+('KAT002', 'tes', 'tes');
 
 --
 -- Indexes for dumped tables
@@ -207,8 +213,7 @@ ALTER TABLE `tb_barangmasuk`
 -- Indeks untuk tabel `tb_detailkeluar`
 --
 ALTER TABLE `tb_detailkeluar`
-  ADD PRIMARY KEY (`kodetransaksi`,`kodebarang`),
-  ADD KEY `kodebarang` (`kodebarang`);
+  ADD PRIMARY KEY (`kodetransaksi`,`kodebarang`);
 
 --
 -- Indeks untuk tabel `tb_detailmasuk`
@@ -249,14 +254,13 @@ ALTER TABLE `tb_barangmasuk`
 -- Ketidakleluasaan untuk tabel `tb_detailkeluar`
 --
 ALTER TABLE `tb_detailkeluar`
-  ADD CONSTRAINT `tb_detailkeluar_ibfk_1` FOREIGN KEY (`kodetransaksi`) REFERENCES `tb_barangkeluar` (`kodetransaksi`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `tb_detailkeluar_ibfk_2` FOREIGN KEY (`kodebarang`) REFERENCES `tb_barang` (`idbarang`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `tb_detailkeluar_ibfk_1` FOREIGN KEY (`kodetransaksi`) REFERENCES `tb_barangkeluar` (`kodetransaksi`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `tb_detailmasuk`
 --
 ALTER TABLE `tb_detailmasuk`
-  ADD CONSTRAINT `tb_detailmasuk_ibfk_1` FOREIGN KEY (`kodebarang`) REFERENCES `tb_barang` (`idbarang`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `tb_detailmasuk_ibfk_2` FOREIGN KEY (`kodetransaksi`) REFERENCES `tb_barangmasuk` (`kodetransaksi`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
