@@ -1,4 +1,5 @@
 # si_persediaan
+Website persediaan ini dibuat menggunakan nattive PHP
 Cara install:
 1. Silahkan download repository github ini
 2. Silahkan extract file ke directory Xampp/htdocs/ (untuk user XAMPP)
